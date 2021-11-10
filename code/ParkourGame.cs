@@ -16,10 +16,14 @@ namespace Facepunch.Parkour
 		{
 			base.DoPlayerSuicide( cl );
 
-			var player = new ParkourPlayer();
-			cl.Pawn = player;
+			if ( cl.Pawn is not Player pl )
+			{
+				cl.Pawn?.Delete();
+				pl = new ParkourPlayer();
+				cl.Pawn = pl;
+			}
 
-			player.Respawn();
+			pl.Respawn();
 		}
 
 		public override void ClientJoined( Client client )
