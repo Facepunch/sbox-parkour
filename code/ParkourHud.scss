@@ -1,4 +1,13 @@
 
+.controls {
+    color:white;
+    letter-spacing: 1px;
+    position:absolute;
+    bottom:128px;
+    left:128px;
+    text-shadow: 1px 1px 1px black;
+}
+
 text.speedometer {
     font-family: Poppins;
     font-size: 50px;
