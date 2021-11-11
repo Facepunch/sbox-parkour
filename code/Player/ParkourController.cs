@@ -59,6 +59,9 @@ namespace Facepunch.Parkour
 		private Vector3 _maxs;
 		private bool _isTouchingLadder;
 		private Vector3 _ladderNormal;
+		private TimeSince _timeSinceSideBoost;
+		private TimeSince _timeSinceMoveLeft;
+		private TimeSince _timeSinceMoveRight;
 
 		public ParkourController()
 		{
@@ -124,7 +127,7 @@ namespace Facepunch.Parkour
 
 			var vaultTime = MinVaultTime.LerpTo( MaxVaultTime, _vaultHeight / MaxVaultHeight );
 
-			if( !_vaultingFromGround )
+			if ( !_vaultingFromGround )
 			{
 				vaultTime *= ClimbVaultMultiplier;
 			}
@@ -136,6 +139,9 @@ namespace Facepunch.Parkour
 			}
 
 			if ( Unstuck.TestAndFix() )
+				return;
+
+			if ( TrySideBoost() )
 				return;
 
 			CheckLadder();
@@ -251,12 +257,60 @@ namespace Facepunch.Parkour
 			return DefaultSpeed;
 		}
 
+		private bool TrySideBoost()
+		{
+			if ( _timeSinceSideBoost < .8f )
+				return false;
+
+			if ( GroundEntity == null )
+				return false;
+
+			if ( Duck.IsActive )
+				return false;
+
+			var moveLeft = Input.Pressed( InputButton.Left );
+			var moveRight = Input.Pressed( InputButton.Right );
+
+			if ( !moveLeft && !moveRight )
+				return false;
+
+			var timeSince = 0f;
+
+			if ( moveLeft )
+			{
+				timeSince = _timeSinceMoveLeft;
+				_timeSinceMoveLeft = 0;
+				_timeSinceMoveRight = 100f;
+			}
+
+			if ( moveRight )
+			{
+				timeSince = _timeSinceMoveRight;
+				_timeSinceMoveRight = 0;
+				_timeSinceMoveLeft = 100f;
+			}
+
+			if ( timeSince > .3f )
+				return false;
+
+			ClearGroundEntity();
+
+			var boostVelocity = new Vector3( 0, Input.Left, 0 ) * Input.Rotation;
+			boostVelocity *= 325f;
+			boostVelocity += Vector3.Up * 130;
+
+			Velocity += boostVelocity;
+			_timeSinceSideBoost = 0;
+
+			return true;
+		}
+
 		private bool StillWallRunning()
 		{
 			if ( GroundEntity != null )
 				return false;
 
-			if ( WishVelocity.WithZ( 0 ).Length.AlmostEqual(0f) )
+			if ( WishVelocity.WithZ( 0 ).Length.AlmostEqual( 0f ) )
 				return false;
 
 			if ( Velocity.Length < 1.0f && TimeSinceWallRun > .5f )
@@ -541,11 +595,6 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			var flGroundFactor = 1.0f;
-			var flMul = 268.3281572999747f * 1.2f;
-			var startz = Velocity.z;
-			var jumpPower = startz + flMul * flGroundFactor;
-
 			if ( Swimming )
 			{
 				ClearGroundEntity();
@@ -562,10 +611,16 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			ClearGroundEntity();
+			var flGroundFactor = 1.0f;
+			var flMul = 268.3281572999747f * 1.2f;
+			var startz = Velocity.z;
 
 			if ( Duck.IsActive )
 				flMul *= 0.8f;
+
+			var jumpPower = startz + flMul * flGroundFactor;
+
+			ClearGroundEntity();
 
 			Velocity = Velocity.WithZ( jumpPower );
 			Velocity -= new Vector3( 0, 0, Gravity * 0.5f ) * Time.Delta;

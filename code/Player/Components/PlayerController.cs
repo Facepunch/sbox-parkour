@@ -2,12 +2,15 @@
 
 namespace Facepunch.Parkour
 {
-    class PlayerController : PlayerComponent
+	class PlayerController : PlayerComponent
 	{
 
 		public override void OnSpawned()
 		{
 			base.OnSpawned();
+
+			if ( !Host.IsServer )
+				return;
 
 			Entity.SetModel( "models/citizen/citizen.vmdl" );
 
@@ -26,13 +29,17 @@ namespace Facepunch.Parkour
 		{
 			base.OnKilled();
 
-			Entity.Camera = new SpectateRagdollCamera();
-			Entity.EnableDrawing = false;
-			Entity.EnableAllCollisions = false;
+			if ( Entity.IsServer )
+			{
+				Entity.Camera = new SpectateRagdollCamera();
+				Entity.EnableDrawing = false;
+				Entity.EnableAllCollisions = false;
+			}
 
-			if ( !Entity.IsClient ) return;
-
-			BecomeRagdoll( Vector3.Zero, DamageFlags.Bullet, Vector3.Zero, Vector3.Zero, 0 );
+			if ( Entity.IsClient )
+			{
+				BecomeRagdoll( Vector3.Zero, DamageFlags.Bullet, Vector3.Zero, Vector3.Zero, 0 );
+			}
 		}
 
 		public void BecomeRagdoll( Vector3 velocity, DamageFlags damageFlags, Vector3 forcePos, Vector3 force, int bone )

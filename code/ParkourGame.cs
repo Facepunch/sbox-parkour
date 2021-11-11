@@ -49,20 +49,6 @@ namespace Facepunch.Parkour
 			RaiseClientJoined( client );
 		}
 
-		public override void DoPlayerSuicide( Client cl )
-		{
-			base.DoPlayerSuicide( cl );
-
-			if ( cl.Pawn is not Player pl )
-			{
-				cl.Pawn?.Delete();
-				pl = new ParkourPlayer();
-				cl.Pawn = pl;
-			}
-
-			pl.Respawn();
-		}
-
 	}
 
 }
