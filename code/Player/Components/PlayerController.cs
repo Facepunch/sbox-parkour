@@ -1,13 +1,21 @@
 ﻿using Sandbox;
+using System;
 
 namespace Facepunch.Parkour
 {
 	class PlayerController : PlayerComponent
 	{
 
+		private Particles speedLines;
+
 		public override void OnSpawned()
 		{
 			base.OnSpawned();
+
+			if ( Host.IsClient )
+			{
+				speedLines = Particles.Create( "particles/player/speed_lines.vpcf", Entity, "hat" );
+			}
 
 			if ( !Host.IsServer )
 				return;
@@ -23,6 +31,18 @@ namespace Facepunch.Parkour
 			Entity.EnableHideInFirstPerson = true;
 			Entity.EnableShadowInFirstPerson = true;
 			Entity.LagCompensation = false;
+		}
+
+		public override void OnSimulate( Client cl )
+		{
+			base.OnSimulate( cl );
+
+			if ( Entity.IsClient )
+			{
+				var controller = Entity.Controller as ParkourController;
+				var scale = Entity.Velocity.WithZ( 0 ).Length / controller.DefaultSpeed;
+				speedLines?.SetPosition( 1, new Vector3( scale * 60f, 0, 0 ) );
+			}
 		}
 
 		public override void OnKilled()
