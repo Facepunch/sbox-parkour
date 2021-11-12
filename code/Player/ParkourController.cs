@@ -32,6 +32,7 @@ namespace Facepunch.Parkour
 		[Net] public bool AutoJump { get; set; } = false;
 		[Net] public float VaultTime { get; set; } = .25f;
 		[Net] public float WallRunTime { get; set; } = 3f;
+		[Net] public float WallRunMinHeight { get; set; } = 90f;
 		[Net] public float JumpPower { get; set; } = 322f;
 		[Net] public float WallJumpPower { get; set; } = 268f;
 		[Net] public float MaxVaultHeight { get; set; } = 150f;
@@ -614,6 +615,9 @@ namespace Facepunch.Parkour
 
 		private bool TryWallRun()
 		{
+			if ( Velocity.z > 100 ) return false;
+			if ( Velocity.z < -100 ) return false;
+
 			var testDirections = new List<Vector3>()
 			{
 				Rotation.Forward,
@@ -635,6 +639,10 @@ namespace Facepunch.Parkour
 
 			if ( !trace.Hit || trace.StartedSolid ) return false;
 			if ( !trace.Normal.z.AlmostEqual( 0, .1f ) ) return false;
+
+			var height = ApproximateWallHeight( Position, trace.Normal, 200, trace.Distance );
+
+			if ( height != 0 && height < WallRunMinHeight ) return false;
 
 			Velocity = Velocity.WithZ( 0 );
 			WallNormal = trace.Normal;
