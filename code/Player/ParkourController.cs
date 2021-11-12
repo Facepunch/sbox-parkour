@@ -157,10 +157,11 @@ namespace Facepunch.Parkour
 				BaseVelocity = BaseVelocity.WithZ( 0 );
 			}
 
-			if ( AutoJump ? Input.Down( InputButton.Jump ) : Input.Pressed( InputButton.Jump ) )
-			{
+			if ( Input.Released( InputButton.Jump ) )
+				_jumpReleased = true;
+
+			if ( Input.Down( InputButton.Jump ) )
 				CheckJumpButton();
-			}
 
 			if ( GroundEntity != null )
 			{
@@ -544,6 +545,7 @@ namespace Facepunch.Parkour
 			}
 		}
 
+		private bool _jumpReleased = true;
 		public virtual void CheckJumpButton()
 		{
 			if ( TryVault() )
@@ -552,23 +554,34 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			if ( WallRunning )
+			if ( Input.Pressed( InputButton.Jump ) && WallRunning )
 			{
 				var jumpDir = new Vector3( Input.Forward, Input.Left, 0 ).Normal;
 				jumpDir *= Rotation.FromYaw( Input.Rotation.Yaw() );
 
 				if ( Vector3.Dot( WallNormal, jumpDir ) <= -.3f )
 				{
-					
+
 					jumpDir = WallNormal;
 				}
 
 				var jumpVelocity = (jumpDir + Vector3.Up) * WallJumpPower;
 				jumpVelocity += jumpDir * Velocity.WithZ( 0 ).Length / 2f;
 
+				_jumpReleased = false;
+
 				Velocity = jumpVelocity;
 				WallNormal = Vector3.Zero;
 				WallRunning = false;
+				return;
+			}
+
+			if ( !WallRunning && _jumpReleased && GroundEntity == null )
+			{
+				if ( TryWallRun() )
+				{
+					AddEvent( "wallrun" );
+				}
 				return;
 			}
 
@@ -579,14 +592,8 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			if ( GroundEntity == null )
-			{
-				if ( TryWallRun() )
-				{
-					AddEvent( "wallrun" );
-				}
+			if ( !AutoJump && !Input.Pressed( InputButton.Jump ) )
 				return;
-			}
 
 			var flGroundFactor = 1.0f;
 			var flMul = JumpPower;
