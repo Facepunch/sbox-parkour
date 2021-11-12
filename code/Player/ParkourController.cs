@@ -627,7 +627,7 @@ namespace Facepunch.Parkour
 			}
 
 			if ( !trace.Hit || trace.StartedSolid ) return false;
-			if ( trace.Normal.z != 0 ) return false;
+			if ( !trace.Normal.z.AlmostEqual( 0, .1f ) ) return false;
 
 			Velocity = Velocity.WithZ( 0 );
 			WallNormal = trace.Normal;
