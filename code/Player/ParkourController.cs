@@ -557,9 +557,9 @@ namespace Facepunch.Parkour
 				var jumpDir = new Vector3( Input.Forward, Input.Left, 0 ).Normal;
 				jumpDir *= Rotation.FromYaw( Input.Rotation.Yaw() );
 
-				if ( Vector3.Dot( WallNormal, jumpDir ) <= -.1f )
+				if ( Vector3.Dot( WallNormal, jumpDir ) <= -.3f )
 				{
-
+					
 					jumpDir = WallNormal;
 				}
 
