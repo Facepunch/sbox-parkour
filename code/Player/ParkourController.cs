@@ -131,7 +131,7 @@ namespace Facepunch.Parkour
 				vaultTime *= ClimbVaultMultiplier;
 			}
 
-			if ( _timeSinceVault < vaultTime )
+			if ( _timeSinceVault < vaultTime ) 
 			{
 				Position = Vector3.Lerp( _vaultStart, _vaultEnd, _timeSinceVault / vaultTime );
 				return;
