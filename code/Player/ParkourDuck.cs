@@ -8,6 +8,7 @@ namespace Facepunch.Parkour
 		private ParkourController _controller;
 		private Vector3 _originalMins;
 		private Vector3 _originalMaxs;
+		private float _tuckDistance = 36f;
 
 		public TimeSince TimeSinceSlide { get; set; }
 		public bool Sliding { get; private set; }
@@ -49,10 +50,31 @@ namespace Facepunch.Parkour
 		protected void TryDuck()
 		{
 			IsActive = true;
+
+			if ( _controller.GroundEntity == null )
+			{
+				_controller.Position += new Vector3( 0, 0, _tuckDistance );
+			}
 		}
 
 		protected void TryUnDuck()
 		{
+			if( _controller.GroundEntity == null )
+			{
+				var untuckDist = _tuckDistance;
+				var groundTrace = _controller.TraceBBox( _controller.Position, _controller.Position + Vector3.Down * _tuckDistance, _originalMins, _originalMaxs );
+
+				if ( groundTrace.Hit )
+				{
+					untuckDist = groundTrace.Distance;
+				}
+
+				if ( _controller.GroundEntity == null )
+				{
+					_controller.Position -= new Vector3( 0, 0, untuckDist );
+				}
+			}
+
 			var pm = _controller.TraceBBox( _controller.Position, _controller.Position, _originalMins, _originalMaxs );
 			if ( pm.StartedSolid ) return;
 
