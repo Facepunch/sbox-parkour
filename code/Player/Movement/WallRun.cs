@@ -52,7 +52,7 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			if( Input.Pressed(InputButton.Jump) )
+			if( Input.Pressed(InputButton.Jump) && timeSinceWallRun > .1f )
 			{
 				JumpOffWall();
 				IsActive = false;
@@ -106,7 +106,9 @@ namespace Facepunch.Parkour
 			if ( ctrl.GroundEntity != null )
 				return false;
 
-			if ( ctrl.WishVelocity.WithZ( 0 ).Length.AlmostEqual( 0f ) )
+			var wishVel = ctrl.GetWishVelocity( true );
+
+			if ( wishVel.Length.AlmostEqual( 0f ) )
 				return false;
 
 			if ( ctrl.Velocity.Length < 1.0f && timeSinceWallRun > .5f )
