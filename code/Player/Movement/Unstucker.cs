@@ -15,7 +15,7 @@ namespace Facepunch.Movement
 		{
 		}
 
-		public override void PreSimulate()
+		public override void Simulate()
 		{
 			var result = ctrl.TraceBBox( ctrl.Position, ctrl.Position );
 
