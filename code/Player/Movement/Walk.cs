@@ -61,41 +61,13 @@ namespace Facepunch.Parkour
 			// todo: might wanna keep things contained...
 			var ducker = ctrl.GetMechanic<Ducker>();
 			var friction = GroundFriction * SurfaceFriction;
-			bool sliding = false, ducking = false;
-
-			if( ducker != null )
-			{
-				sliding = ducker.Sliding;
-				ducking = ducker.IsActive;
-				friction = sliding ? 1f : friction;
-			}
+			bool ducking = ducker != null && ducker.IsActive;
 
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
-			ApplyFriction( StopSpeed, friction );
+			ctrl.ApplyFriction( StopSpeed, friction );
 
-			if ( sliding )
-			{
-				if ( ctrl.GroundNormal.z < 1 )
-				{
-					var slopeDir = Vector3.Cross( Vector3.Up, Vector3.Cross( Vector3.Up, ctrl.GroundNormal ) );
-					var dot = Vector3.Dot( ctrl.Velocity.Normal, slopeDir );
-					var slopeForward = Vector3.Cross( ctrl.GroundNormal, ctrl.Pawn.Rotation.Right );
-					var spdGain = 200f.LerpTo( 500f, 1f - ctrl.GroundNormal.z );
-
-					if ( dot > 0 )
-						spdGain *= -1;
-
-					ctrl.Velocity += spdGain * slopeForward * Time.Delta;
-					// todo: redo momentum, seems like a good source of prediction error
-					Momentum += Time.Delta; 
-				}
-			}
-
-			var accel = ducking && !sliding ? DuckAcceleration : Acceleration;
+			var accel = ducking ? DuckAcceleration : Acceleration;
 			accel += Momentum;
-
-			if ( sliding )
-				accel = .5f;
 
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 			ctrl.Accelerate( wishdir, wishspeed, 0, accel );
@@ -191,25 +163,6 @@ namespace Facepunch.Parkour
 			// if ( flDelta > 0.5f * DIST_EPSILON )
 
 			ctrl.Position = trace.EndPos;
-		}
-
-		private void ApplyFriction( float stopSpeed, float frictionAmount = 1.0f )
-		{
-			var speed = ctrl.Velocity.Length;
-			if ( speed < 0.1f ) return;
-
-			var control = (speed < stopSpeed) ? stopSpeed : speed;
-			var drop = control * Time.Delta * frictionAmount;
-
-			// scale the velocity
-			float newspeed = speed - drop;
-			if ( newspeed < 0 ) newspeed = 0;
-
-			if ( newspeed != speed )
-			{
-				newspeed /= speed;
-				ctrl.Velocity *= newspeed;
-			}
 		}
 
 		private void CategorizePosition( bool bStayOnGround )

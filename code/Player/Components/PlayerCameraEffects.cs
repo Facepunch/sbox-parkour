@@ -15,9 +15,10 @@ namespace Facepunch.Parkour
 			var controller = Entity.Controller as ParkourController;
 
 			var ducker = controller.GetMechanic<Ducker>();
+			var slider = controller.GetMechanic<Slide>();
 			var wishSpd = controller.GetWishSpeed();
 			var bobSpeed = ducker != null && ducker.IsActive ? 10f : 25f;
-			if ( ducker != null && ducker.Sliding ) bobSpeed = 2;
+			if ( slider != null && slider.IsActive ) bobSpeed = 2;
 
 			var bobSpeedAlpha = Entity.Velocity.Length.LerpInverse( 0, wishSpd );
 			var forwardspeed = Entity.Velocity.Normal.Dot( setup.Rotation.Forward );

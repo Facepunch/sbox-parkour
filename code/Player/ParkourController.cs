@@ -29,6 +29,7 @@ namespace Facepunch.Parkour
 			mechanics.Add( new SideBoost( this ) );
 			mechanics.Add( new Unstucker( this ) );
 			mechanics.Add( new Ducker( this ) );
+			mechanics.Add( new Slide( this ) );
 
 
 			mechanics.Add( new MoveDebug( this ) );
@@ -51,6 +52,7 @@ namespace Facepunch.Parkour
 		public override void Simulate()
 		{
 			EyePosLocal = Vector3.Up * (EyeHeight * Pawn.Scale) + TraceOffset;
+			EyePosLocal *= activeMechanic != null ? activeMechanic.EyePosMultiplier : 1f;
 			EyeRot = Input.Rotation;
 			UpdateBBox();
 
@@ -171,7 +173,7 @@ namespace Facepunch.Parkour
 			Velocity = mover.Velocity;
 		}
 
-		public virtual void Accelerate( Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
+		public void Accelerate( Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
 		{
 			if ( speedLimit > 0 && wishspeed > speedLimit )
 				wishspeed = speedLimit;
@@ -188,6 +190,25 @@ namespace Facepunch.Parkour
 				accelspeed = addspeed;
 
 			Velocity += wishdir * accelspeed;
+		}
+
+		public void ApplyFriction( float stopSpeed, float frictionAmount = 1.0f )
+		{
+			var speed = Velocity.Length;
+			if ( speed < 0.1f ) return;
+
+			var control = (speed < stopSpeed) ? stopSpeed : speed;
+			var drop = control * Time.Delta * frictionAmount;
+
+			// scale the velocity
+			float newspeed = speed - drop;
+			if ( newspeed < 0 ) newspeed = 0;
+
+			if ( newspeed != speed )
+			{
+				newspeed /= speed;
+				Velocity *= newspeed;
+			}
 		}
 
 		public void ClearGroundEntity()

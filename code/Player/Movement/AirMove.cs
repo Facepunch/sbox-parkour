@@ -61,15 +61,14 @@ namespace Facepunch.Parkour
 			if ( fallSpeed < 500 )
 				return;
 
-			var duck = ctrl.GetMechanic<Ducker>();
-			var walk = ctrl.GetMechanic<Walk>();
+			//var walk = ctrl.GetMechanic<Walk>();
 
-			var willSlide = Input.Down( InputButton.Duck ) && ctrl.Velocity.WithZ( 0 ).Length > duck.SlideThreshold;
-			var fallSpeedMaxLoss = willSlide ? 5000 : 3000;
+			//var willSlide = Input.Down( InputButton.Duck ) && ctrl.Velocity.WithZ( 0 ).Length > duck.SlideThreshold;
+			var fallSpeedMaxLoss = 3000;
 			var a = 1f - MathF.Min( fallSpeed / fallSpeedMaxLoss, 1 );
 
 			ctrl.Velocity = ctrl.Velocity.ClampLength( ctrl.Velocity.Length * a );
-			walk.Momentum *= a;
+			//walk.Momentum *= a;
 		}
 
 	}

@@ -9,11 +9,9 @@ namespace Facepunch.Parkour
 		private Vector3 originalMaxs;
 		private float tuckDistance = 36f;
 
-		public float SlideThreshold => 130f;
+		public override float EyePosMultiplier => .5f;
 		public float DuckSpeed => 110f;
-		public float SlideBoost => 75f;
-		public TimeSince TimeSinceSlide { get; set; }
-		public bool Sliding { get; private set; }
+		public float MaxDuckSpeed => 130f;
 
 		public Ducker( ParkourController ctrl )
 			: base( ctrl )
@@ -23,9 +21,15 @@ namespace Facepunch.Parkour
 
 		protected override bool TryActivate()
 		{
-			if ( Input.Down( InputButton.Duck ) ) 
-				return true;
-			return false;
+			if ( !Input.Down( InputButton.Duck ) ) return false;
+			if ( ctrl.Velocity.WithZ( 0 ).Length > MaxDuckSpeed ) return false;
+
+			if ( ctrl.GroundEntity == null )
+			{
+				ctrl.Position += new Vector3( 0, 0, tuckDistance );
+			}
+
+			return true;
 		}
 
 		public override void UpdateBBox( ref Vector3 mins, ref Vector3 maxs, float scale = 1f )
@@ -33,52 +37,15 @@ namespace Facepunch.Parkour
 			originalMins = mins;
 			originalMaxs = maxs;
 
-			if ( IsActive )
-			{
-				maxs = maxs.WithZ( (Sliding ? 20 : 36) * scale );
-			}
+			maxs = maxs.WithZ( 36 * scale );
 		}
 
-		public override void PreSimulate()
+		public override void Simulate()
 		{
-			bool wants = Input.Down( InputButton.Duck );
+			ctrl.SetTag( "ducked" );
 
-			if ( wants != IsActive )
-			{
-				if ( wants ) TryDuck();
-				else TryUnDuck();
-			}
+			if ( Input.Down( InputButton.Duck ) ) return;
 
-			if ( IsActive )
-			{
-				var wasSliding = Sliding;
-				Sliding = ctrl.GroundEntity != null && ctrl.Velocity.Length > SlideThreshold;
-				ctrl.SetTag( Sliding ? "sitting" : "ducked" );
-				ctrl.EyePosLocal *= Sliding ? .35f : .5f;
-
-				if ( Sliding && !wasSliding )
-				{
-					TimeSinceSlide = 0;
-
-					var len = ctrl.Velocity.WithZ( 0 ).Length;
-					var newLen = len + SlideBoost;
-					ctrl.Velocity *= newLen / len;
-				}
-			}
-		}
-
-		private void TryDuck()
-		{
-			IsActive = true;
-
-			if ( ctrl.GroundEntity == null )
-			{
-				ctrl.Position += new Vector3( 0, 0, tuckDistance );
-			}
-		}
-
-		private void TryUnDuck()
-		{
 			if ( ctrl.GroundEntity == null )
 			{
 				var untuckDist = tuckDistance;
@@ -98,7 +65,6 @@ namespace Facepunch.Parkour
 			var pm = ctrl.TraceBBox( ctrl.Position, ctrl.Position, originalMins, originalMaxs );
 			if ( pm.StartedSolid ) return;
 
-			Sliding = false;
 			IsActive = false;
 		}
 

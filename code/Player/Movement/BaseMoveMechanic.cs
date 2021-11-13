@@ -10,6 +10,7 @@ namespace Facepunch.Parkour
 		public virtual bool AlwaysSimulate { get; private set; }
 		public virtual bool TakesOverControl { get; }
 		public TimeSince TimeSinceActivate { get; private set; }
+		public virtual float EyePosMultiplier => 1f;
 
 		protected ParkourController ctrl;
 
