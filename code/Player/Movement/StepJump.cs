@@ -62,13 +62,13 @@ namespace Facepunch.Parkour
 				if ( moveLen > 0 ) return;
 			}
 
-			ctrl.GetMechanic<Unstucker>()?.Simulate();
-
 			var jumpVec = Vector3.Up * JumpPower;
 
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 			ctrl.Velocity += jumpVec;
-			ctrl.Move();
+			ctrl.Position += ctrl.Velocity * Time.Delta;
+
+			ctrl.GetMechanic<Unstucker>()?.Simulate();
 
 			IsActive = false;
 		}
