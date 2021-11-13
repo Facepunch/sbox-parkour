@@ -6,10 +6,9 @@ namespace Facepunch.Movement
 	class Unstucker : BaseMoveMechanic
 	{
 
-		private int _stuckTries = 0;
-		private bool _stuck;
+		public override bool AlwaysSimulate => true;
 
-		public override bool TakesOverControl => _stuck;
+		private int _stuckTries = 0;
 
 		public Unstucker( ParkourController ctrl )
 			: base( ctrl )
@@ -18,35 +17,24 @@ namespace Facepunch.Movement
 
 		public override void PreSimulate()
 		{
-			_stuck = TestAndFix();
-		}
-
-		public virtual bool TestAndFix()
-		{
 			var result = ctrl.TraceBBox( ctrl.Position, ctrl.Position );
 
 			// Not stuck, we cool
 			if ( !result.StartedSolid )
 			{
+
 				_stuckTries = 0;
-				return false;
+				return;
 			}
 
-			if ( result.StartedSolid )
+			if ( BasePlayerController.Debug )
 			{
-				if ( BasePlayerController.Debug )
-				{
-					DebugOverlay.Text( ctrl.Position, $"[stuck in {result.Entity}]", Color.Red );
-					Box( result.Entity, Color.Red );
-				}
+				DebugOverlay.Text( ctrl.Position, $"[stuck in {result.Entity}]", Color.Red );
+				Box( result.Entity, Color.Red );
 			}
 
-			//
-			// Client can't jiggle its way out, needs to wait for
-			// server correction to come
-			//
 			if ( Host.IsClient )
-				return true;
+				return;
 
 			int AttemptsPerTick = 20;
 
@@ -71,7 +59,7 @@ namespace Facepunch.Movement
 					}
 
 					ctrl.Position = pos;
-					return false;
+					return;
 				}
 				else
 				{
@@ -83,8 +71,6 @@ namespace Facepunch.Movement
 			}
 
 			_stuckTries++;
-
-			return true;
 		}
 
 		public void Box( Entity ent, Color color, float duration = 0.0f )
