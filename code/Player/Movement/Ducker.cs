@@ -11,7 +11,7 @@ namespace Facepunch.Parkour
 
 		public override float EyePosMultiplier => .5f;
 		public float DuckSpeed => 110f;
-		public float MaxDuckSpeed => 130f;
+		public float MaxDuckSpeed => 140f;
 
 		public Ducker( ParkourController ctrl )
 			: base( ctrl )
@@ -22,7 +22,8 @@ namespace Facepunch.Parkour
 		protected override bool TryActivate()
 		{
 			if ( !Input.Down( InputButton.Duck ) ) return false;
-			if ( ctrl.Velocity.WithZ( 0 ).Length > MaxDuckSpeed ) return false;
+			//let slide activate if we too fast
+			if ( ctrl.GroundEntity != null && ctrl.Velocity.WithZ( 0 ).Length > MaxDuckSpeed ) return false;
 
 			if ( ctrl.GroundEntity == null )
 			{

@@ -1,9 +1,4 @@
 ﻿using Sandbox;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Facepunch.Parkour
 {
@@ -12,7 +7,8 @@ namespace Facepunch.Parkour
 
 		public float StopSpeed => 50f;
 		public float Friction => 1f;
-		public float SlideThreshold => 111f;
+		public float EndSlideSpeed => 120f;
+		public float StartSlideSpeed => 150f;
 		public float SlideBoost => 75f;
 		public TimeSince TimeSinceSlide { get; set; }
 		public bool Sliding { get; private set; }
@@ -33,7 +29,7 @@ namespace Facepunch.Parkour
 		{
 			if ( !Input.Down( InputButton.Duck ) ) return false;
 			if ( ctrl.GroundEntity == null ) return false;
-			if ( ctrl.Velocity.WithZ( 0 ).Length < SlideThreshold ) return false;
+			if ( ctrl.Velocity.WithZ( 0 ).Length < StartSlideSpeed ) return false;
 
 			TimeSinceSlide = 0;
 
@@ -60,14 +56,16 @@ namespace Facepunch.Parkour
 			return 100;
 		}
 
-		public override void Simulate()
+		public override void PreSimulate()
 		{
 			if ( !StillSliding() )
 			{
 				IsActive = false;
-				return;
 			}
+		}
 
+		public override void Simulate()
+		{
 			ctrl.SetTag( "sitting" );
 
 			if ( ctrl.GroundNormal.z < 1 )
@@ -95,7 +93,7 @@ namespace Facepunch.Parkour
 		{
 			if ( !Input.Down( InputButton.Duck ) ) return false;
 			if ( ctrl.GroundEntity == null ) return false;
-			if ( ctrl.Velocity.WithZ( 0 ).Length < SlideThreshold ) return false;
+			if ( ctrl.Velocity.WithZ( 0 ).Length < EndSlideSpeed ) return false;
 			return true;
 		}
 

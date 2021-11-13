@@ -22,9 +22,7 @@ namespace Facepunch.Parkour
 			if ( Local.Pawn is not ParkourPlayer pawn )
 				return;
 
-			var eyePos = pawn.EyePos;
-
-			Position = eyePos;
+			Position = pawn.EyePos;
 			Rotation = pawn.EyeRot;
 
 			Viewer = pawn;

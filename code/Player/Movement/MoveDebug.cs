@@ -13,7 +13,7 @@ namespace Facepunch.Parkour
 
 		}
 
-		public override void Simulate()
+		public override void PostSimulate()
 		{
 			if ( BasePlayerController.Debug )
 			{
