@@ -28,7 +28,7 @@ namespace Facepunch.Parkour
 
 			if ( ctrl.GroundEntity == null )
 			{
-				ctrl.Position += new Vector3( 0, 0, tuckDistance );
+				//ctrl.Position += new Vector3( 0, 0, tuckDistance );
 			}
 
 			return true;
@@ -66,7 +66,7 @@ namespace Facepunch.Parkour
 
 				if ( ctrl.GroundEntity == null )
 				{
-					ctrl.Position -= new Vector3( 0, 0, untuckDist );
+					//ctrl.Position -= new Vector3( 0, 0, untuckDist );
 				}
 			}
 
