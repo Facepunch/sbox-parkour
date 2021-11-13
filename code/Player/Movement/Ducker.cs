@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System.Diagnostics;
 
 namespace Facepunch.Parkour
 {
@@ -44,6 +45,12 @@ namespace Facepunch.Parkour
 		public override void Simulate()
 		{
 			ctrl.SetTag( "ducked" );
+
+			if ( ctrl.GroundEntity != null && ctrl.Velocity.WithZ( 0 ).Length > MaxDuckSpeed )
+			{
+				IsActive = false;
+				return;
+			}
 
 			if ( Input.Down( InputButton.Duck ) ) return;
 
