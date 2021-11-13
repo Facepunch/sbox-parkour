@@ -10,8 +10,6 @@ namespace Facepunch.Parkour
 		public float GroundAngle => 46.0f;
 		public bool AutoJump => false;
 		public float JumpPower => 322f;
-		public float SprintSpeed => 250f;
-		public float WalkSpeed => 150.0f;
 		public float DefaultSpeed => 350f;
 		public float GroundFriction => 4.0f;
 		public float MaxNonJumpVelocity => 140.0f;
@@ -46,9 +44,6 @@ namespace Facepunch.Parkour
 
 		public override float GetWishSpeed()
 		{
-			if ( Input.Down( InputButton.Run ) ) return SprintSpeed;
-			if ( Input.Down( InputButton.Walk ) ) return WalkSpeed;
-
 			return DefaultSpeed;
 		}
 
@@ -116,14 +111,6 @@ namespace Facepunch.Parkour
 			var flGroundFactor = 1.0f;
 			var flMul = JumpPower;
 			var startz = ctrl.Velocity.z;
-
-			// todo: might wanna keep things contained...
-			var ducker = ctrl.GetMechanic<Ducker>();
-			var ducking = ducker != null && ducker.IsActive;
-
-			if ( ducking )
-				flMul *= 0.8f;
-
 			var jumpPower = startz + flMul * flGroundFactor;
 
 			ctrl.ClearGroundEntity();
