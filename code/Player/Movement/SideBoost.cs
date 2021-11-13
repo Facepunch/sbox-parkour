@@ -66,6 +66,8 @@ namespace Facepunch.Parkour
 		{
 			base.Simulate();
 
+			ctrl.Move();
+
 			if ( timeSinceSideBoost < .15f )
 				return;
 
