@@ -40,7 +40,7 @@ namespace Facepunch.Parkour
 			if ( Entity.IsClient )
 			{
 				var controller = Entity.Controller as ParkourController;
-				var scale = Entity.Velocity.WithZ( 0 ).Length / controller.DefaultSpeed;
+				var scale = Entity.Velocity.WithZ( 0 ).Length / controller.GetMechanic<Walk>().DefaultSpeed;
 				speedLines?.SetPosition( 1, new Vector3( scale * 22f, 0, 0 ) );
 			}
 		}

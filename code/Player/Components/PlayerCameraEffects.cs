@@ -13,9 +13,11 @@ namespace Facepunch.Parkour
 		public override void OnPostCameraSetup( ref CameraSetup setup ) 
 		{
 			var controller = Entity.Controller as ParkourController;
+
+			var ducker = controller.GetMechanic<Ducker>();
 			var wishSpd = controller.GetWishSpeed();
-			var bobSpeed = controller.Duck.IsActive ? 10f : 25f;
-			if ( controller.Duck.Sliding ) bobSpeed = 2;
+			var bobSpeed = ducker != null && ducker.IsActive ? 10f : 25f;
+			if ( ducker != null && ducker.Sliding ) bobSpeed = 2;
 
 			var bobSpeedAlpha = Entity.Velocity.Length.LerpInverse( 0, wishSpd );
 			var forwardspeed = Entity.Velocity.Normal.Dot( setup.Rotation.Forward );
@@ -23,7 +25,9 @@ namespace Facepunch.Parkour
 			var left = setup.Rotation.Left;
 			var up = setup.Rotation.Up;
 
-			if ( Entity.GroundEntity != null || controller.WallRunning )
+			var wallrun = controller.GetMechanic<WallRun>();
+
+			if ( Entity.GroundEntity != null || wallrun.IsActive )
 			{
 				walkBob += Time.Delta * bobSpeed * bobSpeedAlpha;
 			}
@@ -31,8 +35,8 @@ namespace Facepunch.Parkour
 			setup.Position += up * MathF.Sin( walkBob ) * bobSpeedAlpha * 3;
 			setup.Position += left * MathF.Sin( walkBob * 0.6f ) * bobSpeedAlpha * 2;
 
-			var targetLean = controller.WallRunning
-				? controller.WallNormal.Dot( setup.Rotation.Right ) * 12f
+			var targetLean = wallrun.IsActive
+				? wallrun.Wall.Normal.Dot( setup.Rotation.Right ) * 12f
 				: Entity.Velocity.Dot( setup.Rotation.Right ) * .03f;
 
 			// Camera lean
