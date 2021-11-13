@@ -5,8 +5,6 @@ namespace Facepunch.Parkour
     class ParkourCamera : Camera
 	{
 
-		private Vector3 _lastPos;
-
 		public override void Activated()
 		{
 			var pawn = Local.Pawn;
@@ -14,8 +12,6 @@ namespace Facepunch.Parkour
 
 			Position = pawn.EyePos;
 			Rotation = pawn.EyeRot;
-
-			_lastPos = Position;
 
 			ZNear = 3;
 			FieldOfView = 100;
@@ -28,12 +24,10 @@ namespace Facepunch.Parkour
 
 			var eyePos = pawn.EyePos;
 
-			Position = eyePos.WithZ( _lastPos.z.LerpTo( eyePos.z, 50f * Time.Delta ) );
+			Position = eyePos;
 			Rotation = pawn.EyeRot;
 
 			Viewer = pawn;
-
-			_lastPos = Position;
 		}
 
 	}

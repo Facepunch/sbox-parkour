@@ -16,6 +16,7 @@ namespace Facepunch.Parkour
 
 		private List<BaseMoveMechanic> mechanics = new();
 		private BaseMoveMechanic activeMechanic => mechanics.FirstOrDefault( x => x.IsActive );
+		private float _eyePosMult;
 
 		public ParkourController()
 		{
@@ -51,8 +52,12 @@ namespace Facepunch.Parkour
 
 		public override void Simulate()
 		{
+			var targetEyePosMult = activeMechanic != null ? activeMechanic.EyePosMultiplier : 1f;
+			// todo: make this a real lerp
+			_eyePosMult = _eyePosMult.LerpTo( targetEyePosMult, 15f * Time.Delta );
+
 			EyePosLocal = Vector3.Up * (EyeHeight * Pawn.Scale) + TraceOffset;
-			EyePosLocal *= activeMechanic != null ? activeMechanic.EyePosMultiplier : 1f;
+			EyePosLocal *= _eyePosMult;
 			EyeRot = Input.Rotation;
 			UpdateBBox();
 
