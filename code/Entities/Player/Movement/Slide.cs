@@ -58,16 +58,14 @@ namespace Facepunch.Parkour
 			return 100;
 		}
 
-		public override void PreSimulate()
+		public override void Simulate()
 		{
 			if ( !StillSliding() )
 			{
 				IsActive = false;
+				return;
 			}
-		}
 
-		public override void Simulate()
-		{
 			ctrl.SetTag( "sitting" );
 
 			if ( ctrl.GroundNormal.z < 1 )
