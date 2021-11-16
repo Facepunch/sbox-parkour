@@ -1,70 +1,14 @@
 ﻿using Sandbox;
-using System;
 
 namespace Facepunch.Parkour
 {
-	class PlayerController : PlayerComponent
+    class Ragdoller : EntityComponent<ModelEntity>
 	{
 
-		private Particles speedLines;
-
-		public override void OnSpawned()
+		public void Ragdoll( Vector3 velocity, DamageFlags damageFlags, Vector3 forcePos, Vector3 force, int bone )
 		{
-			base.OnSpawned();
+			Host.AssertClient();
 
-			if ( Host.IsClient )
-			{
-				speedLines = Particles.Create( "particles/player/speed_lines.vpcf", Entity, "hat" );
-			}
-
-			if ( !Host.IsServer )
-				return;
-
-			Entity.SetModel( "models/citizen/citizen.vmdl" );
-
-			Entity.Controller = new ParkourController();
-			Entity.Animator = new StandardPlayerAnimator();
-			Entity.Camera = new ParkourCamera();
-
-			Entity.EnableAllCollisions = true;
-			Entity.EnableDrawing = true;
-			Entity.EnableHideInFirstPerson = true;
-			Entity.EnableShadowInFirstPerson = true;
-			Entity.LagCompensation = false;
-		}
-
-		public override void OnSimulate( Client cl )
-		{
-			base.OnSimulate( cl );
-
-			if ( Entity.IsClient )
-			{
-				var controller = Entity.Controller as ParkourController;
-				var speed = Entity.Velocity.Length.Remap( 0f, controller.GetMechanic<Walk>().DefaultSpeed, 0f, 1f );
-				speed = Math.Min( Easing.EaseIn( speed ) * 22f, 22f );
-				speedLines?.SetPosition( 1, new Vector3( speed, 0, 0 ) );
-			}
-		}
-
-		public override void OnKilled()
-		{
-			base.OnKilled();
-
-			if ( Entity.IsServer )
-			{
-				Entity.Camera = new SpectateRagdollCamera();
-				Entity.EnableDrawing = false;
-				Entity.EnableAllCollisions = false;
-			}
-
-			if ( Entity.IsClient )
-			{
-				BecomeRagdoll( Vector3.Zero, DamageFlags.Bullet, Vector3.Zero, Vector3.Zero, 0 );
-			}
-		}
-
-		public void BecomeRagdoll( Vector3 velocity, DamageFlags damageFlags, Vector3 forcePos, Vector3 force, int bone )
-		{
 			var ent = new ModelEntity();
 			ent.Position = Entity.Position;
 			ent.Rotation = Entity.Rotation;
@@ -133,7 +77,10 @@ namespace Facepunch.Parkour
 				}
 			}
 
-			Entity.Corpse = ent;
+			if( Entity is Player pl )
+			{
+				pl.Corpse = ent;
+			}
 
 			ent.DeleteAsync( 10.0f );
 		}

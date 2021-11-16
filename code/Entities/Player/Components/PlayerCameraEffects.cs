@@ -1,16 +1,38 @@
-﻿using Sandbox;
+﻿﻿using Sandbox;
 using System;
 
 namespace Facepunch.Parkour
 {
-    class PlayerCameraEffects : PlayerComponent
+	class PlayerCameraEffects : PlayerComponent
 	{
 
+		Particles speedLines;
 		float walkBob = 0;
 		float lean = 0;
 		float fov = 0;
 
-		public override void OnPostCameraSetup( ref CameraSetup setup ) 
+		public override void OnSpawned()
+		{
+			if ( Entity.IsClient )
+			{
+				speedLines = Particles.Create( "particles/player/speed_lines.vpcf", Entity, "hat" );
+			}
+		}
+
+		public override void OnSimulate( Client cl )
+		{
+			base.OnSimulate( cl );
+
+			if ( Entity.IsClient )
+			{
+				var controller = Entity.Controller as ParkourController;
+				var speed = Entity.Velocity.Length.Remap( 0f, controller.GetMechanic<Walk>().DefaultSpeed, 0f, 1f );
+				speed = Math.Min( Easing.EaseIn( speed ) * 22f, 22f );
+				speedLines?.SetPosition( 1, new Vector3( speed, 0, 0 ) );
+			}
+		}
+
+		public override void OnPostCameraSetup( ref CameraSetup setup )
 		{
 			var controller = Entity.Controller as ParkourController;
 

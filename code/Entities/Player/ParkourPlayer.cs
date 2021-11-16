@@ -9,9 +9,11 @@ namespace Facepunch.Parkour
 		{
 			base.Spawn();
 
+			// not sure this is really helping yet
 			Components.Add( new PlayerController() );
-			Components.Add( new PlayerClothes() );
 			Components.Add( new PlayerCameraEffects() );
+			Components.Add( new Dresser() );
+			Components.Add( new Ragdoller() );
 		}
 
 		public override void Respawn()
@@ -28,7 +30,8 @@ namespace Facepunch.Parkour
 
 			foreach ( var component in Components.GetAll<PlayerComponent>() )
 			{
-				component.OnSimulate( cl );
+				if ( component is PlayerComponent c )
+					c.OnSimulate( cl );
 			}
 		}
 
@@ -38,16 +41,6 @@ namespace Facepunch.Parkour
 
 			RaisePlayerKilled();
 			RaisePlayerKilledOnClient();
-		}
-
-		public override void PostCameraSetup( ref CameraSetup setup )
-		{
-			base.PostCameraSetup( ref setup );
-
-			foreach ( var component in Components.GetAll<PlayerComponent>() )
-			{
-				component.OnPostCameraSetup( ref setup );
-			}
 		}
 
 		private void RaisePlayerKilled()
@@ -76,6 +69,14 @@ namespace Facepunch.Parkour
 		private void RaisePlayerSpawnedOnClient()
 		{
 			RaisePlayerSpawned();
+		}
+
+		public override void PostCameraSetup( ref CameraSetup setup )
+		{
+			foreach ( var component in Components.GetAll<PlayerComponent>() )
+			{
+				component.OnPostCameraSetup( ref setup );
+			}
 		}
 
 	}
