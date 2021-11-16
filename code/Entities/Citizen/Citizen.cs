@@ -6,6 +6,8 @@ namespace Facepunch.Parkour
     partial class Citizen : AnimEntity
 	{
 
+		private DamageInfo lastDamageInfo { get; set; }
+
 		public override void Spawn()
 		{
 			base.Spawn();
@@ -17,7 +19,10 @@ namespace Facepunch.Parkour
 			}
 
 			SetModel( "models/citizen/citizen.vmdl" );
+			SetupPhysicsFromCapsule( PhysicsMotionType.Dynamic, new Capsule( Vector3.Zero, Vector3.Up * 64, 15 ) );
+
 			Health = 100;
+			EnableAllCollisions = true;
 
 			// not sure this is really helping yet
 			Components.Add( new Ragdoller() );
@@ -28,13 +33,20 @@ namespace Facepunch.Parkour
 		{
 			base.OnKilled();
 
-			BecomeRagdollOnClient();
+			BecomeRagdollOnClient( Velocity, lastDamageInfo.Flags, lastDamageInfo.Position, lastDamageInfo.Force );
+		}
+
+		public override void TakeDamage( DamageInfo info )
+		{
+			lastDamageInfo = info;
+
+			base.TakeDamage( info );
 		}
 
 		[ClientRpc]
-		public void BecomeRagdollOnClient()
+		public void BecomeRagdollOnClient( Vector3 velocity, DamageFlags damageFlags, Vector3 forcePos, Vector3 force )
 		{
-			Components.Get<Ragdoller>()?.Ragdoll( Vector3.Zero, DamageFlags.Bullet, Vector3.Zero, Vector3.Zero, 0 );
+			Components.Get<Ragdoller>()?.Ragdoll( velocity, damageFlags, forcePos, force, 0 );
 		}
 
 	}
