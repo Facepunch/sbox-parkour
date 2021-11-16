@@ -7,7 +7,7 @@ namespace Facepunch.Parkour
 
 		public float JumpPower => 250f;
 		public float VelocityMulti => 1.2f;
-		public float MinLedgeHeight => 40;
+		public float MinLedgeHeight => 64;
 
 		private TimeSince timeSinceJump;
 
@@ -24,8 +24,8 @@ namespace Facepunch.Parkour
 			if ( ctrl.GroundEntity == null ) return false;
 			if ( !Input.Down( InputButton.Run ) ) return false;
 
-			var trStart = ctrl.Position;
-			var trEnd = ctrl.Position + ctrl.Velocity.WithZ( 0 ) + Vector3.Down * MinLedgeHeight;
+			var trStart = ctrl.Position + ctrl.Velocity.WithZ(0) * Time.Delta;
+			var trEnd = trStart + Vector3.Down * MinLedgeHeight;
 			var tr = ctrl.TraceBBox( trStart, trEnd, 1f );
 
 			if ( tr.Hit ) return false;
