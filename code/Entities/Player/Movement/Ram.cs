@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.ScreenShake;
 
 namespace Facepunch.Parkour
 {
@@ -33,6 +34,7 @@ namespace Facepunch.Parkour
 
 			if ( !ctrl.Pawn.IsServer )
 			{
+				new Perlin( 2, 1, 5 );
 				return;
 			}
 
