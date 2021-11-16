@@ -51,14 +51,9 @@ namespace Facepunch.Parkour
 
 		public override void Simulate()
 		{
-			base.Simulate();
-
 			if ( !StillWallRunning() )
 			{
 				IsActive = false;
-
-				if ( ctrl.GroundEntity != null )
-					ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 				return;
 			}
 
@@ -143,30 +138,14 @@ namespace Facepunch.Parkour
 
 		private WallInfo? FindRunnableWall()
 		{
-			var testDirections = new List<Vector3>()
-			{
-				ctrl.Rotation.Forward,
-				ctrl.Rotation.Right,
-				ctrl.Rotation.Left,
-				ctrl.Rotation.Backward
-			};
+			var wall = GetWallInfo( ctrl.Rotation.Forward );
 
-			WallInfo? targetWall = null;
+			if ( wall == null ) return null;
+			if ( wall.Value.Distance > ctrl.BodyGirth ) return null;
+			if ( wall.Value.Height < MinWallHeight ) return null;
+			if ( !wall.Value.Normal.z.AlmostEqual( 0, .1f ) ) return null;
 
-			foreach ( var dir in testDirections )
-			{
-				targetWall = GetWallInfo( dir );
-
-				if ( targetWall == null ) continue;
-				if ( targetWall.Value.Height < MinWallHeight ) continue;
-
-				break;
-			}
-
-			if ( targetWall == null ) return null;
-			if ( !targetWall.Value.Normal.z.AlmostEqual( 0, .1f ) ) return null;
-
-			return targetWall;
+			return wall;
 		}
 
 	}
