@@ -53,6 +53,9 @@ namespace Facepunch.Parkour
 
 			if ( ctrl.GroundEntity != null && !groundedAtStart )
 				DoFallDamage();
+
+			if ( ctrl.GroundEntity == null && groundedAtStart )
+				new FallCameraModifier( -150, 1.5f );
 		}
 
 		private void DoFallDamage()
