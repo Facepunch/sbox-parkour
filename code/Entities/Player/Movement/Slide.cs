@@ -38,6 +38,8 @@ namespace Facepunch.Parkour
 			ctrl.Velocity *= newLen / len;
 			ctrl.SetTag( "sitting" );
 
+			new FallCameraModifier( -300 );
+
 			return true;
 		}
 

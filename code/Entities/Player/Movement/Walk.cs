@@ -116,6 +116,8 @@ namespace Facepunch.Parkour
 			ctrl.ClearGroundEntity();
 			ctrl.Velocity = ctrl.Velocity.WithZ( jumpPower );
 			ctrl.AddEvent( "jump" );
+
+			new FallCameraModifier( jumpPower );
 		}
 
 		private void DoMomentum()

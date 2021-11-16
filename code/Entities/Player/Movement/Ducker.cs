@@ -31,6 +31,8 @@ namespace Facepunch.Parkour
 				//ctrl.Position += new Vector3( 0, 0, tuckDistance );
 			}
 
+			new FallCameraModifier( 100 );
+
 			return true;
 		}
 

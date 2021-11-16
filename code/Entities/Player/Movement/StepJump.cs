@@ -40,6 +40,8 @@ namespace Facepunch.Parkour
 			jumpPos = tr.EndPos + Vector3.Up * 10;
 			moveLen = (jumpPos - ctrl.Position).Length;
 
+			new FallCameraModifier( 300 );
+
 			return true;
 		}
 
@@ -69,6 +71,8 @@ namespace Facepunch.Parkour
 			ctrl.Position += ctrl.Velocity * Time.Delta;
 
 			ctrl.GetMechanic<Unstucker>()?.Simulate();
+
+			new FallCameraModifier( -500 );
 
 			IsActive = false;
 		}

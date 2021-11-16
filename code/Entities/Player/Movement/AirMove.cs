@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.ScreenShake;
 using System;
 
 namespace Facepunch.Parkour
@@ -57,6 +58,11 @@ namespace Facepunch.Parkour
 		private void DoFallDamage()
 		{
 			var fallSpeed = Math.Abs( velocityAtStart.z );
+
+			if( ctrl.Pawn.IsClient )
+			{
+				new FallCameraModifier( fallSpeed );
+			}
 
 			if ( fallSpeed < 500 )
 				return;

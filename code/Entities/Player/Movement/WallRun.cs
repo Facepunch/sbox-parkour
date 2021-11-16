@@ -99,6 +99,8 @@ namespace Facepunch.Parkour
 
 			ctrl.Velocity = jumpVelocity;
 			Wall = default;
+
+			new FallCameraModifier( jumpVelocity.Length );
 		}
 
 		private bool StillWallRunning()
