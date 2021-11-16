@@ -10,11 +10,14 @@ namespace Facepunch.Parkour
 		public float WallRunMinHeight => 90f;
 		public float WallJumpPower => 268f;
 		public float MinWallHeight => 90;
+		public float WallClimbSpeed => 200f;
+		public float WallClimbTime => 1f;
 
 		public override bool TakesOverControl => true;
 		public WallInfo Wall { get; private set; }
 
 		private TimeSince timeSinceWallRun;
+		private Vector3 prevWallRunStart;
 
 		public WallRun( ParkourController ctrl )
 			: base( ctrl )
@@ -32,9 +35,16 @@ namespace Facepunch.Parkour
 			var wall = FindRunnableWall();
 			if ( wall == null ) return false;
 
+			var startPos = wall.Value.Trace.EndPos;
+			var dist = prevWallRunStart.WithZ( 0 ).Distance( startPos.WithZ( 0 ) );
+
+			// check x dist is a certain amount to avoid wallrunning straight up multiple times
+			if ( dist < 50 && timeSinceWallRun < 2f ) return false;
+
 			Wall = wall.Value;
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 			timeSinceWallRun = 0;
+			prevWallRunStart = wall.Value.Trace.EndPos;
 
 			return true;
 		}
@@ -52,7 +62,7 @@ namespace Facepunch.Parkour
 				return;
 			}
 
-			if( Input.Pressed(InputButton.Jump) && timeSinceWallRun > .1f )
+			if ( Input.Pressed( InputButton.Jump ) && timeSinceWallRun > .1f )
 			{
 				JumpOffWall();
 				IsActive = false;
@@ -63,9 +73,14 @@ namespace Facepunch.Parkour
 			var gravity = timeSinceWallRun / WallRunTime * 150f;
 			var lookingAtWall = Vector3.Dot( Wall.Normal, wishVel.Normal ) < -.5f;
 
-			if ( lookingAtWall && Input.Forward > 0 && timeSinceWallRun < 1f )
+			if ( lookingAtWall && Input.Forward > 0 )
 			{
-				ctrl.Velocity = new Vector3( 0, 0, 200 );
+				if( timeSinceWallRun > WallClimbTime )
+				{
+					IsActive = false;
+					return;
+				}
+				ctrl.Velocity = new Vector3( 0, 0, WallClimbSpeed );
 			}
 			else
 			{
@@ -86,8 +101,8 @@ namespace Facepunch.Parkour
 
 		private void JumpOffWall()
 		{
-			var jumpDir = new Vector3( Input.Forward, Input.Left, 0 ).Normal;
-			jumpDir *= Rotation.FromYaw( Input.Rotation.Yaw() );
+			var jumpDir = ctrl.EyeRot.Forward;
+			jumpDir.z *= .5f;
 
 			if ( Vector3.Dot( Wall.Normal, jumpDir ) <= -.3f )
 				jumpDir = Wall.Normal;
@@ -100,7 +115,7 @@ namespace Facepunch.Parkour
 			ctrl.Velocity = jumpVelocity;
 			Wall = default;
 
-			new FallCameraModifier( jumpVelocity.Length );
+			new FallCameraModifier( -jumpVelocity.Length );
 		}
 
 		private bool StillWallRunning()

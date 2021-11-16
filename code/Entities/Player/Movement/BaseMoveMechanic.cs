@@ -45,7 +45,8 @@ namespace Facepunch.Parkour
 			{
 				Height = height,
 				Distance = trace.Distance,
-				Normal = trace.Normal
+				Normal = trace.Normal,
+				Trace = trace
 			};
 		}
 
@@ -79,6 +80,7 @@ namespace Facepunch.Parkour
 		public float Distance;
 		public Vector3 Normal;
 		public float Height;
+		public TraceResult Trace;
 	}
 
 }
