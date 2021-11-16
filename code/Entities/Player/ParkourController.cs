@@ -32,6 +32,7 @@ namespace Facepunch.Parkour
 			mechanics.Add( new Ducker( this ) );
 			mechanics.Add( new Slide( this ) );
 			mechanics.Add( new Ram( this ) );
+			mechanics.Add( new LedgeJump( this ) );
 
 
 			mechanics.Add( new MoveDebug( this ) );
