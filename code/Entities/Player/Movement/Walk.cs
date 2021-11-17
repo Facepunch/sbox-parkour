@@ -16,7 +16,6 @@ namespace Facepunch.Parkour
 		public float SurfaceFriction { get; set; } = 1f;
 		public float Acceleration => 2f;
 		public float DuckAcceleration => 5f;
-		public float Momentum { get; set; }
 
 		public override bool AlwaysSimulate => true;
 
@@ -31,7 +30,6 @@ namespace Facepunch.Parkour
 			if ( ctrl.GroundEntity == null ) return;
 
 			WalkMove();
-			DoMomentum();
 			CheckJumpButton();
 		}
 
@@ -62,7 +60,7 @@ namespace Facepunch.Parkour
 			ctrl.ApplyFriction( StopSpeed, friction );
 
 			var accel = ducking ? DuckAcceleration : Acceleration;
-			accel += Momentum;
+			accel += GetMomentum();
 
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 			ctrl.Accelerate( wishdir, wishspeed, 0, accel );
@@ -120,11 +118,13 @@ namespace Facepunch.Parkour
 			new FallCameraModifier( jumpPower );
 		}
 
-		private void DoMomentum()
+		// todo: really need to do this in a way we can define simply
+		// how long it takes to go from standing to max speed
+		private float GetMomentum()
 		{
 			var a = ctrl.Velocity.WithZ( 0 ).Length / DefaultSpeed;
-
-			Momentum = 0f.LerpTo( 2f, a );
+			a = Easing.EaseIn( a );
+			return a * 2.4f;
 		}
 
 		/// <summary>
