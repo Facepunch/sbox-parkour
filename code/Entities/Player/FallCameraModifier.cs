@@ -7,9 +7,9 @@ namespace Facepunch.Parkour
 	{
 
 		private float fallSpeed;
-		private TimeSince lifetime = 0;
 		private float pos = 0;
 		private float length;
+		private float t;
 
 		private const float effectMaxSpeed = 1500f;
 		private const float effectStrength = 500f;
@@ -22,7 +22,7 @@ namespace Facepunch.Parkour
 
 		public override bool Update( ref CameraSetup setup )
 		{
-			var delta = ((float)lifetime).LerpInverse( 0, length, true );
+			var delta = ((float)t).LerpInverse( 0, length, true );
 			delta = Easing.EaseOut( delta );
 			var invdelta = 1 - delta;
 
@@ -33,7 +33,9 @@ namespace Facepunch.Parkour
 
 			setup.Rotation *= Rotation.FromAxis( Vector3.Left, effectStrength * invdelta * pos * a );
 
-			return lifetime < length;
+			t += Time.Delta;
+
+			return t < length;
 		}
 
 	}
