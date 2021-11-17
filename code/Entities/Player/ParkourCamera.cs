@@ -5,12 +5,15 @@ namespace Facepunch.Parkour
     class ParkourCamera : Camera
 	{
 
+		private Vector3 _eyePosLocal;
+
 		public override void Activated()
 		{
 			var pawn = Local.Pawn;
 			if ( pawn == null ) return;
 
-			Position = pawn.EyePos;
+			_eyePosLocal = pawn.EyePosLocal;
+			Position = pawn.Position + _eyePosLocal;
 			Rotation = pawn.EyeRot;
 
 			ZNear = 3;
@@ -22,7 +25,8 @@ namespace Facepunch.Parkour
 			if ( Local.Pawn is not ParkourPlayer pawn )
 				return;
 
-			Position = pawn.EyePos;
+			_eyePosLocal = _eyePosLocal.LerpTo( pawn.EyePosLocal, 25f * Time.Delta );
+			Position = pawn.Position + _eyePosLocal;
 			Rotation = pawn.EyeRot;
 
 			Viewer = pawn;
