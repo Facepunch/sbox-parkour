@@ -22,7 +22,6 @@ namespace Facepunch.Parkour
 			Entity.EnableDrawing = true;
 			Entity.EnableHideInFirstPerson = true;
 			Entity.EnableShadowInFirstPerson = true;
-			Entity.LagCompensation = false;
 			Entity.Health = 100;
 
 			Entity.Components.Get<Dresser>()?.DressFromAvatar();
