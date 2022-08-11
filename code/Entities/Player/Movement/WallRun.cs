@@ -35,7 +35,7 @@ namespace Facepunch.Parkour
 			var wall = FindRunnableWall();
 			if ( wall == null ) return false;
 
-			var startPos = wall.Value.Trace.EndPos;
+			var startPos = wall.Value.Trace.EndPosition;
 			var dist = prevWallRunStart.WithZ( 0 ).Distance( startPos.WithZ( 0 ) );
 
 			// check x dist is a certain amount to avoid wallrunning straight up multiple times
@@ -44,7 +44,7 @@ namespace Facepunch.Parkour
 			Wall = wall.Value;
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 			timeSinceWallRun = 0;
-			prevWallRunStart = wall.Value.Trace.EndPos;
+			prevWallRunStart = wall.Value.Trace.EndPosition;
 
 			return true;
 		}
@@ -87,7 +87,7 @@ namespace Facepunch.Parkour
 
 			if ( pm.Fraction == 1 )
 			{
-				ctrl.Position = pm.EndPos;
+				ctrl.Position = pm.EndPosition;
 				return;
 			}
 
@@ -96,7 +96,7 @@ namespace Facepunch.Parkour
 
 		private void JumpOffWall()
 		{
-			var jumpDir = ctrl.EyeRot.Forward;
+			var jumpDir = ctrl.EyeRotation.Forward;
 			jumpDir.z *= .5f;
 
 			if ( Vector3.Dot( Wall.Normal, jumpDir ) <= -.3f )

@@ -16,15 +16,13 @@ namespace Facepunch.Parkour
 
 			Entity.Controller = new ParkourController();
 			Entity.Animator = new StandardPlayerAnimator();
-			Entity.Camera = new ParkourCamera();
+			Entity.CameraMode = new ParkourCamera();
 
 			Entity.EnableAllCollisions = true;
 			Entity.EnableDrawing = true;
 			Entity.EnableHideInFirstPerson = true;
 			Entity.EnableShadowInFirstPerson = true;
 			Entity.Health = 100;
-
-			Entity.Components.Get<Dresser>()?.DressFromAvatar();
 		}
 
 		public override void OnSimulate( Client cl )
@@ -33,16 +31,16 @@ namespace Facepunch.Parkour
 
 
 			// dev shit
-			if ( !Entity.IsClient && Input.Pressed( InputButton.Attack1 ) )
+			if ( !Entity.IsClient && Input.Pressed( InputButton.PrimaryAttack ) )
 			{
-				var tr = Trace.Ray( Entity.EyePos, Entity.EyePos + Entity.EyeRot.Forward * 5000 )
+				var tr = Trace.Ray( Entity.EyePosition, Entity.EyePosition + Entity.EyeRotation.Forward * 5000 )
 					.WorldOnly()
 					.Run();
 				if ( tr.Hit )
 				{
 					var citizen = new Citizen();
-					citizen.Position = tr.EndPos;
-					citizen.Rotation = Rotation.LookAt( (Entity.Position - tr.EndPos).WithZ( 0 ) );
+					citizen.Position = tr.EndPosition;
+					citizen.Rotation = Rotation.LookAt( (Entity.Position - tr.EndPosition).WithZ( 0 ) );
 				}
 			}
 		}
@@ -53,11 +51,9 @@ namespace Facepunch.Parkour
 
 			if ( Entity.IsServer )
 			{
-				Entity.Camera = new SpectateRagdollCamera();
+				Entity.CameraMode = new SpectateRagdollCamera();
 				Entity.EnableDrawing = false;
 				Entity.EnableAllCollisions = false;
-
-				Entity.Components.Get<Dresser>()?.Clear(); 
 			}
 
 			if ( Entity.IsClient )

@@ -37,7 +37,7 @@ namespace Facepunch.Parkour
 
 			if ( !tr.Hit || tr.StartedSolid ) return false;
 
-			jumpPos = tr.EndPos + Vector3.Up * 10;
+			jumpPos = tr.EndPosition + Vector3.Up * 10;
 			moveLen = (jumpPos - ctrl.Position).Length;
 
 			new FallCameraModifier( 300 );

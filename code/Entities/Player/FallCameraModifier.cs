@@ -3,6 +3,13 @@ using System;
 
 namespace Facepunch.Parkour
 {
+	class CameraModifier
+    {
+		public virtual bool Update(ref CameraSetup setup)
+        {
+			return false;
+        }
+    }
 	class FallCameraModifier : CameraModifier
 	{
 

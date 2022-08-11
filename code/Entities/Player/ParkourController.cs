@@ -48,14 +48,14 @@ namespace Facepunch.Parkour
 		{
 			base.FrameSimulate();
 
-			EyeRot = Input.Rotation;
+			EyeRotation = Input.Rotation;
 		}
 
 		public override void Simulate()
 		{
-			EyePosLocal = Vector3.Up * (64 * Pawn.Scale) + TraceOffset;
-			EyePosLocal *= activeMechanic != null ? activeMechanic.EyePosMultiplier : 1f;
-			EyeRot = Input.Rotation;
+			EyeLocalPosition = Vector3.Up * (64 * Pawn.Scale) + TraceOffset;
+			EyeLocalPosition *= activeMechanic != null ? activeMechanic.EyePosMultiplier : 1f;
+			EyeRotation = Input.Rotation;
 			UpdateBBox();
 
 			// This is confusing and needs review:

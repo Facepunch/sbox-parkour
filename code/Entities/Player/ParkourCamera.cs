@@ -2,7 +2,7 @@
 
 namespace Facepunch.Parkour
 {
-    class ParkourCamera : Camera
+    class ParkourCamera : CameraMode
 	{
 
 		private Vector3 _eyePosLocal;
@@ -12,9 +12,9 @@ namespace Facepunch.Parkour
 			var pawn = Local.Pawn;
 			if ( pawn == null ) return;
 
-			_eyePosLocal = pawn.EyePosLocal;
+			_eyePosLocal = pawn.EyeLocalPosition;
 			Position = pawn.Position + _eyePosLocal;
-			Rotation = pawn.EyeRot;
+			Rotation = pawn.EyeRotation;
 
 			ZNear = 3;
 			FieldOfView = 100;
@@ -25,9 +25,9 @@ namespace Facepunch.Parkour
 			if ( Local.Pawn is not ParkourPlayer pawn )
 				return;
 
-			_eyePosLocal = _eyePosLocal.LerpTo( pawn.EyePosLocal, 25f * Time.Delta );
+			_eyePosLocal = _eyePosLocal.LerpTo( pawn.EyeLocalPosition, 25f * Time.Delta );
 			Position = pawn.Position + _eyePosLocal;
-			Rotation = pawn.EyeRot;
+			Rotation = pawn.EyeRotation;
 
 			Viewer = pawn;
 		}

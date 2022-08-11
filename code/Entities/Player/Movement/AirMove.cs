@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.ScreenShake;
 using System;
 
 namespace Facepunch.Parkour

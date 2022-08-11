@@ -1,4 +1,38 @@
 {
-    "sharedassets": "*.*",
-    "type": "game"
+  "Title": "Parkour",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "parkour",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": null,
+  "HasCode": true,
+  "CodePath": "/code/",
+  "RootNamespace": "Parkour",
+  "Metadata": {
+    "MaxPlayers": 10,
+    "MinPlayers": 1,
+    "GameNetworkType": "Multiplayer",
+    "MapSelect": "Unrestricted",
+    "MapList": [
+      "facepunch.construct"
+    ],
+    "RankType": "None",
+    "PerMapRanking": false,
+    "LeaderboardType": "None",
+    "GameCategory": "None",
+    "Physics": {
+      "SubSteps": 1,
+      "TimeScale": 1,
+      "Gravity": "0,0,-800",
+      "AirDensity": 1.2,
+      "SleepingEnabled": true,
+      "SimulationMode": "Continuous",
+      "PositionIterations": 2,
+      "VelocityIterations": 8,
+      "SoftBodyIterations": 1,
+      "SoftBodySubsteps": 1
+    }
+  }
 }

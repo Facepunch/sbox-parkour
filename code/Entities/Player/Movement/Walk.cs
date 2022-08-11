@@ -84,7 +84,7 @@ namespace Facepunch.Parkour
 
 				if ( pm.Fraction == 1 )
 				{
-					ctrl.Position = pm.EndPos;
+					ctrl.Position = pm.EndPosition;
 					StayOnGround();
 					return;
 				}
@@ -137,7 +137,7 @@ namespace Facepunch.Parkour
 
 			// See how far up we can go without getting stuck
 			var trace = ctrl.TraceBBox( ctrl.Position, start );
-			start = trace.EndPos;
+			start = trace.EndPosition;
 
 			// Now trace down from a known safe position
 			trace = ctrl.TraceBBox( start, end );
@@ -151,7 +151,7 @@ namespace Facepunch.Parkour
 			// float flDelta = fabs( mv->GetAbsOrigin().z - trace.m_vEndPos.z );
 			// if ( flDelta > 0.5f * DIST_EPSILON )
 
-			ctrl.Position = trace.EndPos;
+			ctrl.Position = trace.EndPosition;
 		}
 
 		private void CategorizePosition( bool bStayOnGround )
@@ -203,7 +203,7 @@ namespace Facepunch.Parkour
 
 			if ( bMoveToEndPos && !pm.StartedSolid && pm.Fraction > 0.0f && pm.Fraction < 1.0f )
 			{
-				ctrl.Position = pm.EndPos;
+				ctrl.Position = pm.EndPosition;
 			}
 		}
 

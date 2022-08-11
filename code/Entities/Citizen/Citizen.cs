@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Facepunch.Parkour
 {
-    partial class Citizen : AnimEntity
+    partial class Citizen : AnimatedEntity
 	{
 
 		private DamageInfo lastDamageInfo { get; set; }
@@ -26,7 +26,7 @@ namespace Facepunch.Parkour
 
 			// not sure this is really helping yet
 			Components.Add( new Ragdoller() );
-			Components.Add( new Dresser() ).DressFromRandom();
+
 		}
 
 		public override void OnKilled()

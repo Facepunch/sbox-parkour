@@ -12,7 +12,6 @@ namespace Facepunch.Parkour
 			// not sure this is really helping yet
 			Components.Add( new PlayerController() );
 			Components.Add( new PlayerCameraEffects() );
-			Components.Add( new Dresser() );
 			Components.Add( new Ragdoller() );
 		}
 
@@ -20,6 +19,8 @@ namespace Facepunch.Parkour
 		{
 			RaisePlayerSpawned();
 			RaisePlayerSpawnedOnClient();
+
+			Tags.Add("player");
 
 			base.Respawn();
 		}

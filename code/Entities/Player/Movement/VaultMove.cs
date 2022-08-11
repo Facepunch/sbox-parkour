@@ -34,7 +34,7 @@ namespace Facepunch.Parkour
 			if ( wall == null ) return false;
 			if ( wall.Value.Height == 0 ) return false;
 			if ( wall.Value.Distance > ctrl.BodyGirth * 2 ) return false;
-			if ( Vector3.Dot( ctrl.EyeRot.Forward, wall.Value.Normal ) > -.5f ) return false;
+			if ( Vector3.Dot( ctrl.EyeRotation.Forward, wall.Value.Normal ) > -.5f ) return false;
 
 			var posFwd = ctrl.Position - wall.Value.Normal * (ctrl.BodyGirth + wall.Value.Distance);
 			var floorTraceStart = posFwd.WithZ( wall.Value.Height );
@@ -44,7 +44,7 @@ namespace Facepunch.Parkour
 			if ( !floorTrace.Hit ) return false;
 			if ( floorTrace.StartedSolid ) return false;
 
-			var vaultHeight = floorTrace.EndPos.z - ctrl.Position.z;
+			var vaultHeight = floorTrace.EndPosition.z - ctrl.Position.z;
 			if ( vaultHeight < MinVaultHeight ) return false;
 			if ( vaultHeight > MaxVaultHeight ) return false;
 
@@ -53,7 +53,7 @@ namespace Facepunch.Parkour
 			vaultingFromGround = ctrl.GroundEntity != null;
 			timeSinceVault = 0;
 			vaultStart = ctrl.Position;
-			vaultEnd = ctrl.Position.WithZ( floorTrace.EndPos.z + 10 ) + ctrl.Rotation.Forward * ctrl.BodyGirth;
+			vaultEnd = ctrl.Position.WithZ( floorTrace.EndPosition.z + 10 ) + ctrl.Rotation.Forward * ctrl.BodyGirth;
 			ctrl.Velocity = ctrl.Velocity.WithZ( 0 );
 
 			return true;

@@ -17,14 +17,14 @@ namespace Facepunch.Parkour
 
 		protected override bool TryActivate()
 		{
-			if ( ctrl.Pawn.WaterLevel.Fraction > 0.6f ) 
+			if ( ctrl.Pawn.WaterLevel > 0.6f ) 
 				return true;
 			return false;
 		}
 
 		public override void Simulate()
 		{
-			if ( ctrl.Pawn.WaterLevel.Fraction <= 0.6f )
+			if ( ctrl.Pawn.WaterLevel <= 0.6f )
 			{
 				IsActive = false;
 				return;
